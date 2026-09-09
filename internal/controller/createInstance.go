@@ -10,7 +10,6 @@ import (
 	ec2types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	computev1alpha1 "github.com/ritesh-karankal/operator/api/v1alpha1"
 	"sigs.k8s.io/controller-runtime/pkg/log"
-
 )
 
 func createEc2Instance(ec2Instance *computev1alpha1.EC2Instance) (createdInstanceInfo *computev1alpha1.CreatedInstanceInfo, err error) {
@@ -44,7 +43,7 @@ func createEc2Instance(ec2Instance *computev1alpha1.EC2Instance) (createdInstanc
 	if len(result.Instances) == 0 {
 		l.Error(nil, "No instances returned in RunInstancesOutput")
 		fmt.Println("No instances returned in RunInstancesOutput")
-		return nil, nil
+		return nil, fmt.Errorf("RunInstances returned no instances")
 	}
 
 	inst := result.Instances[0]
@@ -76,7 +75,6 @@ func createEc2Instance(ec2Instance *computev1alpha1.EC2Instance) (createdInstanc
 
 	fmt.Println("Describe result", "public ip", *describeResult.Reservations[0].Instances[0].PublicDnsName, "state", describeResult.Reservations[0].Instances[0].State.Name)
 
-
 	fmt.Printf("Private IP of the instance: %v", derefString(inst.PrivateIpAddress))
 	fmt.Printf("State of the instance: %v", describeResult.Reservations[0].Instances[0].State.Name)
 	fmt.Printf("Private DNS of the instance: %v", derefString(inst.PrivateDnsName))
@@ -101,7 +99,6 @@ func createEc2Instance(ec2Instance *computev1alpha1.EC2Instance) (createdInstanc
 		"publicIP", createdInstanceInfo.PublicIP)
 
 	return createdInstanceInfo, nil
-
 
 }
 

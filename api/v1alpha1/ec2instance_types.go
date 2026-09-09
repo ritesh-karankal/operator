@@ -32,18 +32,18 @@ type EC2InstanceSpec struct {
 
 	// foo is an example field of EC2Instance. Edit ec2instance_types.go to remove/update
 
-	InstanceType        string            `json:"instanceType"`
-	InstanceName        string            `json:"instanceName"`
-	AMIId               string            `json:"amiId"`
-	Region              string            `json:"region"`
-	AvailabilityZone    string            `json:"availabilityZone`
-	KeyPair             string            `json:"keyPair"`
-	SecurityGroups      []string          `json:"securityGroups"`
-	Subnet              string            `json:"subnet"`
-	UserData            string            `json:"userData"`
-	Tags                map[string]string `json:"tags,omitempty"`
-	Storage             StorageConfig     `json:"storage,omitempty"`
-	AssociatePubliccIP bool              `json:"associatePublicIP,omitempty"`
+	InstanceType      string            `json:"instanceType"`
+	InstanceName      string            `json:"instanceName"`
+	AMIId             string            `json:"amiId"`
+	Region            string            `json:"region"`
+	AvailabilityZone  string            `json:"availabilityZone"`
+	KeyPair           string            `json:"keyPair"`
+	SecurityGroups    []string          `json:"securityGroups"`
+	Subnet            string            `json:"subnet"`
+	UserData          string            `json:"userData"`
+	Tags              map[string]string `json:"tags,omitempty"`
+	Storage           StorageConfig     `json:"storage,omitempty"`
+	AssociatePublicIP bool              `json:"associatePublicIP,omitempty"`
 }
 
 type StorageConfig struct {
@@ -75,9 +75,9 @@ type EC2InstanceStatus struct {
 	// - "Degraded": the resource failed to reach or maintain its desired state
 	//
 
-	InstanceID string `json:"instanceID,omitempty"`
-	State      string `json:"state,omitempty"`
-	PublicIP   string `json:"publicIP,omitempty"`
+	InstanceID string       `json:"instanceID,omitempty"`
+	State      string       `json:"state,omitempty"`
+	PublicIP   string       `json:"publicIP,omitempty"`
 	PrivateIP  string       `json:"privateIP,omitempty"`
 	PublicDNS  string       `json:"publicDNS,omitempty"`
 	PrivateDNS string       `json:"privateDNS,omitempty"`

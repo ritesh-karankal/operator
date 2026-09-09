@@ -76,7 +76,6 @@ func (r *EC2InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		l.Error(err, "Failed to add finalizer")
 		return ctrl.Result{
 			Requeue: true,
-
 		}, err
 	}
 
