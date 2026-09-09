@@ -18,11 +18,13 @@ package controller
 
 import (
 	"context"
+	// "time"
 
+	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-
+	// "sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	computev1alpha1 "github.com/ritesh-karankal/operator/api/v1alpha1"
@@ -52,7 +54,7 @@ func (r *EC2InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 	l.Info("=== RECONCILE LOOP STARTED ===", "namespace", req.Namespace, "name", req.Name)
 
-	ec2Instance := &computev1.EC2Instance{}
+	ec2Instance := &computev1alpha1.EC2Instance{}
 	if err := r.Get(ctx, req.NamespacedName, ec2Instance); err != nil {
 		if errors.IsNotFound(err) {
 			l.Info("Instance Deleted. No need to reconcile")
@@ -66,7 +68,7 @@ func (r *EC2InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, nil
 	}
 
-	l.Info("Crating new instance")
+	l.Info("Creating new instance")
 
 	l.Info("=== ABOUT TO ADD FINALIZER ===")
 	ec2Instance.Finalizers = append(ec2Instance.Finalizers, "ec2instance.compute.cloud.com")
@@ -88,7 +90,9 @@ func (r *EC2InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, err
 	}
 
-	l.Info("=== ABOUT TO UPDATE STATUS - This will trigger reconcile loop again ===", "instanceID", createdInstanceInfo.InstanceID, "state", createdInstanceInfo.State)
+	l.Info("=== ABOUT TO UPDATE STATUS - This will trigger reconcile loop again ===",
+		"instanceID", createdInstanceInfo.InstanceID,
+		"state", createdInstanceInfo.State)
 
 	ec2Instance.Status.InstanceID = createdInstanceInfo.InstanceID
 	ec2Instance.Status.State = createdInstanceInfo.State
@@ -97,7 +101,7 @@ func (r *EC2InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	ec2Instance.Status.PublicDNS = createdInstanceInfo.PublicDNS
 	ec2Instance.Status.PrivateDNS = createdInstanceInfo.PrivateDNS
 
-	err = r.Status()Update(ctx, ec2Instance)
+	err = r.Status().Update(ctx, ec2Instance)
 	if err != nil {
 		l.Error(err, "Failed to update status")
 		return ctrl.Result{}, err
