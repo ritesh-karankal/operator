@@ -1,0 +1,22 @@
+apiVersion: compute.cloud.com/v1
+kind: EC2Instance
+metadata:
+  name: dummy-ec2-instance
+  namespace: default
+spec:
+  instanceName: dummy-instance
+  amiId: ami-0123456789abcdef0
+  sshKey: dummy-key
+  instanceType: t3.micro
+  subnet: subnet-0123456789abcdef0
+  tags:
+    Environment: development
+    Owner: demo
+  storage:
+    size: 20
+    type: gp3
+  additionalStorage:
+    - size: 50
+      type: gp3
+    - size: 100
+      type: gp2

@@ -32,8 +32,20 @@ type EC2InstanceSpec struct {
 	// More info: https://book.kubebuilder.io/reference/markers/crd-validation.html
 
 	// foo is an example field of EC2Instance. Edit ec2instance_types.go to remove/update
-	// +optional
-	Foo *string `json:"foo,omitempty"`
+
+	InstanceName      string            `json:"instanceName"`
+	AmiID             string            `json:"amiId"`
+	SshKey            string            `json:"sshKey"`
+	InstanceType      string            `json:"instanceType"`
+	Subnet            string            `json:"subnet"`
+	Tags              map[string]string `json:"tags,omitempty"`
+	Storage           StorageConfig     `json:"storage"`
+	AdditionalStorage []StorageConfig   `json:"additionalStorage,omitempty"`
+}
+
+type StorageConfig struct {
+	Size int    `json:"size"`
+	Type string `json:"type"`
 }
 
 // EC2InstanceStatus defines the observed state of EC2Instance.
@@ -52,11 +64,10 @@ type EC2InstanceStatus struct {
 	// - "Progressing": the resource is being created or updated
 	// - "Degraded": the resource failed to reach or maintain its desired state
 	//
-	// The status of each condition is one of True, False, or Unknown.
-	// +listType=map
-	// +listMapKey=type
-	// +optional
-	Conditions []metav1.Condition `json:"conditions,omitempty"`
+
+	Phase      string `json:"phase,omitempty"`
+	InstanceID string `json:"instanceID,omitempty"`
+	PublicIP   string `json:"publicIP,omitempty"`
 }
 
 // +kubebuilder:object:root=true
