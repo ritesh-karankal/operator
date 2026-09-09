@@ -1,0 +1,34 @@
+Reconcile
+   │
+   ├── Does object exist?
+   │      ├── No → return
+   │      └── Yes
+   │
+   ├── Does status.InstanceID exist?
+   │      ├── Yes → instance already exists
+   │      │          return
+   │      │
+   │      └── No
+   │
+   ├── Add finalizer
+   │      │
+   │      └── Update Kubernetes object
+   │
+   ├── Create EC2
+   │      │
+   │      ├── RunInstances
+   │      │
+   │      ├── Wait for instance to become Running
+   │      │
+   │      └── DescribeInstances
+   │
+   ├── Update status
+   │      │
+   │      ├── InstanceID
+   │      ├── State
+   │      ├── PublicIP
+   │      ├── PrivateIP
+   │      ├── PublicDNS
+   │      └── PrivateDNS
+   │
+   └── return
