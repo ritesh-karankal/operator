@@ -33,19 +33,30 @@ type EC2InstanceSpec struct {
 
 	// foo is an example field of EC2Instance. Edit ec2instance_types.go to remove/update
 
-	InstanceName      string            `json:"instanceName"`
-	AmiID             string            `json:"amiId"`
-	SshKey            string            `json:"sshKey"`
-	InstanceType      string            `json:"instanceType"`
-	Subnet            string            `json:"subnet"`
-	Tags              map[string]string `json:"tags,omitempty"`
-	Storage           StorageConfig     `json:"storage"`
-	AdditionalStorage []StorageConfig   `json:"additionalStorage,omitempty"`
+	InstanceType        string            `json:"instanceType"`
+	InstanceName        string            `json:"instanceName"`
+	AmiID               string            `json:"amiId"`
+	Region              string            `json:"region"`
+	AvailabilityZone    string            `json:"availabilityZone`
+	KeyPair             string            `json:"keyPair"`
+	SecurityGroups      []string          `json:"securityGroups"`
+	Subnet              string            `json:"subnet"`
+	UserData            string            `json:"userData"`
+	Tags                map[string]string `json:"tags,omitempty"`
+	Storage             StorageConfig     `json:"storage"`
+	AdditionalPubliccIP bool              `json:"additionalPublicIP,omitempty"`
 }
 
 type StorageConfig struct {
-	Size int    `json:"size"`
-	Type string `json:"type"`
+	RootVolume        VolumeConfig   `json:"rootVolume"`
+	AdditionalVolumes []VolumeConfig `json:"additionalVolumes"`
+}
+
+type VolumeConfig struct {
+	Size       int32  `json:"size"`
+	Type       string `json:"type,omitempty`
+	DeviceName string `json:"deviceName,omitempty`
+	Encrypted  bool   `json:"encrypted,omitempty`
 }
 
 // EC2InstanceStatus defines the observed state of EC2Instance.
@@ -65,8 +76,8 @@ type EC2InstanceStatus struct {
 	// - "Degraded": the resource failed to reach or maintain its desired state
 	//
 
-	Phase      string `json:"phase,omitempty"`
 	InstanceID string `json:"instanceID,omitempty"`
+	State      string `json:"state,omitempty"`
 	PublicIP   string `json:"publicIP,omitempty"`
 }
 
