@@ -18,7 +18,6 @@ package v1alpha1
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
@@ -35,7 +34,7 @@ type EC2InstanceSpec struct {
 
 	InstanceType        string            `json:"instanceType"`
 	InstanceName        string            `json:"instanceName"`
-	AmiID               string            `json:"amiId"`
+	AMIId               string            `json:"amiId"`
 	Region              string            `json:"region"`
 	AvailabilityZone    string            `json:"availabilityZone`
 	KeyPair             string            `json:"keyPair"`
@@ -43,20 +42,20 @@ type EC2InstanceSpec struct {
 	Subnet              string            `json:"subnet"`
 	UserData            string            `json:"userData"`
 	Tags                map[string]string `json:"tags,omitempty"`
-	Storage             StorageConfig     `json:"storage"`
-	AdditionalPubliccIP bool              `json:"additionalPublicIP,omitempty"`
+	Storage             StorageConfig     `json:"storage,omitempty"`
+	AssociatePubliccIP bool              `json:"associatePublicIP,omitempty"`
 }
 
 type StorageConfig struct {
 	RootVolume        VolumeConfig   `json:"rootVolume"`
-	AdditionalVolumes []VolumeConfig `json:"additionalVolumes"`
+	AdditionalVolumes []VolumeConfig `json:"additionalVolumes,omitempty"`
 }
 
 type VolumeConfig struct {
 	Size       int32  `json:"size"`
-	Type       string `json:"type,omitempty`
-	DeviceName string `json:"deviceName,omitempty`
-	Encrypted  bool   `json:"encrypted,omitempty`
+	Type       string `json:"type,omitempty"`
+	DeviceName string `json:"deviceName,omitempty"`
+	Encrypted  bool   `json:"encrypted,omitempty"`
 }
 
 // EC2InstanceStatus defines the observed state of EC2Instance.
@@ -79,6 +78,10 @@ type EC2InstanceStatus struct {
 	InstanceID string `json:"instanceID,omitempty"`
 	State      string `json:"state,omitempty"`
 	PublicIP   string `json:"publicIP,omitempty"`
+	PrivateIP  string       `json:"privateIP,omitempty"`
+	PublicDNS  string       `json:"publicDNS,omitempty"`
+	PrivateDNS string       `json:"privateDNS,omitempty"`
+	LaunchTime *metav1.Time `json:"launchTime,omitempty"`
 }
 
 // +kubebuilder:object:root=true
@@ -110,9 +113,15 @@ type EC2InstanceList struct {
 	Items           []EC2Instance `json:"items"`
 }
 
+type CreatedInstanceInfo struct {
+	InstanceID string `json:"instanceId"`
+	PublicIP   string `json:"publicIP"`
+	PrivateIP  string `json:"privateIP"`
+	PublicDNS  string `json:"publicDNS"`
+	PrivateDNS string `json:"privateDNS"`
+	State      string `json:"state"`
+}
+
 func init() {
-	SchemeBuilder.Register(func(s *runtime.Scheme) error {
-		s.AddKnownTypes(SchemeGroupVersion, &EC2Instance{}, &EC2InstanceList{})
-		return nil
-	})
+	SchemeBuilder.Register(&EC2Instance{}, &EC2InstanceList{})
 }
