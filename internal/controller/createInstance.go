@@ -2,6 +2,8 @@ package controller
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -11,7 +13,7 @@ import (
 
 )
 
-func createEc2Instance(ec2Instace *computev1alpha1.EC2Instance) (createdInstanceInfo *computev1alpha1.CreatedInstanceInfo, err error) {
+func createEc2Instance(ec2Instance *computev1alpha1.EC2Instance) (createdInstanceInfo *computev1alpha1.CreatedInstanceInfo, err error) {
 	l := log.Log.WithName("createEc2Instance")
 
 	l.Info("=== STARTING EC2 INSTANCE CREATION ===",
