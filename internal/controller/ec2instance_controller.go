@@ -18,7 +18,7 @@ package controller
 
 import (
 	"context"
-	// "time"
+	"time"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -62,6 +62,23 @@ func (r *EC2InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 			return ctrl.Result{}, nil
 		}
 		return ctrl.Result{}, err
+	}
+
+	if !ec2Instance.DeletionTimestamp.IsZero() {
+		l.Info("Has deletionTimestamp, Instance is being deleted")
+		_, err := deleteEc2Instance(ctx, ec2Instance)
+		if err != nil {
+			l.Error(err, "Failed to delete EC2 instance")
+			return ctrl.Result{Requeue: true}, err
+		}
+
+		controllerutil.RemoveFinalizer(ec2Instance, "ec2instance.compute.cloud.com")
+		if err := r.Update(ctx, ec2Instance); err != nil {
+			l.Error(err, "Failed to remove Finalizer")
+			return ctrl.Result{Requeue: true}, err
+		}
+
+		return ctrl.Result{}, nil
 	}
 
 	if ec2Instance.Status.InstanceID != "" {
@@ -126,7 +143,7 @@ func (r *EC2InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 	l.Info("=== STATUS UPDATED - Reconcile loop will be triggered again ===")
 
-	return ctrl.Result{}, nil
+	return ctrl.Result{RequeueAfter: 1 * time.Second}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
