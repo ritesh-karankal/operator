@@ -24,7 +24,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	// "sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	computev1alpha1 "github.com/ritesh-karankal/operator/api/v1alpha1"
@@ -55,6 +55,7 @@ func (r *EC2InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	l.Info("=== RECONCILE LOOP STARTED ===", "namespace", req.Namespace, "name", req.Name)
 
 	ec2Instance := &computev1alpha1.EC2Instance{}
+
 	if err := r.Get(ctx, req.NamespacedName, ec2Instance); err != nil {
 		if errors.IsNotFound(err) {
 			l.Info("Instance Deleted. No need to reconcile")
@@ -71,19 +72,36 @@ func (r *EC2InstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	l.Info("Creating new instance")
 
 	l.Info("=== ABOUT TO ADD FINALIZER ===")
-	ec2Instance.Finalizers = append(ec2Instance.Finalizers, "ec2instance.compute.cloud.com")
-	if err := r.Update(ctx, ec2Instance); err != nil {
-		l.Error(err, "Failed to add finalizer")
-		return ctrl.Result{
-			Requeue: true,
-		}, err
+	// ec2Instance.Finalizers = append(ec2Instance.Finalizers, "ec2instance.compute.cloud.com")
+	// if err := r.Update(ctx, ec2Instance); err != nil {
+	// 	l.Error(err, "Failed to add finalizer")
+	// 	return ctrl.Result{
+	// 		Requeue: true,
+	// 	}, err
+	// }
+
+	const ec2InstanceFinalizer = "ec2instance.compute.cloud.com"
+
+	if !controllerutil.ContainsFinalizer(ec2Instance, ec2InstanceFinalizer) {
+		l.Info("Adding finalizer")
+
+		controllerutil.AddFinalizer(ec2Instance, ec2InstanceFinalizer)
+
+		if err := r.Update(ctx, ec2Instance); err != nil {
+			l.Error(err, "Failed to add finalizer")
+			return ctrl.Result{}, err
+		}
+
+		l.Info("Finalizer added")
+
+		return ctrl.Result{}, nil
 	}
 
 	l.Info("=== FINALIZER ADDED - This update will triger a NEW reconcile loop, but current reconcile continues ===")
 
 	l.Info("=== CONTINUING WITH EC2 INSTANCE CREATION IN CURRENT RECONCILE ===")
 
-	createdInstanceInfo, err := createEc2Instance(ec2Instance)
+	createdInstanceInfo, err := createEc2Instance(ctx, ec2Instance)
 	if err != nil {
 		l.Error(err, "Failed to create EC2 instance")
 		return ctrl.Result{}, err
