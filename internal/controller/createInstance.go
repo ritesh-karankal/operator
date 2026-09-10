@@ -23,12 +23,12 @@ func createEc2Instance(ctx context.Context, ec2Instance *computev1alpha1.EC2Inst
 	ec2Client := awsClient(ec2Instance.Spec.Region)
 
 	runInput := &ec2.RunInstancesInput{
-		ImageId:      aws.String(ec2Instance.Spec.AMIId),
-		InstanceType: ec2types.InstanceType(ec2Instance.Spec.InstanceType),
-		KeyName:      aws.String(ec2Instance.Spec.KeyPair),
-		SubnetId:     aws.String(ec2Instance.Spec.Subnet),
-		MinCount:     aws.Int32(1),
-		MaxCount:     aws.Int32(1),
+		ImageId:          aws.String(ec2Instance.Spec.AMIId),
+		InstanceType:     ec2types.InstanceType(ec2Instance.Spec.InstanceType),
+		KeyName:          aws.String(ec2Instance.Spec.KeyPair),
+		SubnetId:         aws.String(ec2Instance.Spec.Subnet),
+		MinCount:         aws.Int32(1),
+		MaxCount:         aws.Int32(1),
 		SecurityGroupIds: []string{ec2Instance.Spec.SecurityGroups[0]},
 	}
 

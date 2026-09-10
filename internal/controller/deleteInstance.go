@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 	computev1alpha1 "github.com/ritesh-karankal/operator/api/v1alpha1"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
 func deleteEc2Instance(ctx context.Context, ec2Instance *computev1alpha1.EC2Instance) (bool, error) {
