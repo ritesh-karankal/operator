@@ -24,6 +24,7 @@ import (
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
 // EC2InstanceSpec defines the desired state of EC2Instance
+
 type EC2InstanceSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
@@ -88,6 +89,12 @@ type EC2InstanceStatus struct {
 // +kubebuilder:subresource:status
 
 // EC2Instance is the Schema for the ec2instances API
+// +kubebuilder:printcolumn:name="Instance ID",type="string",JSONPath=".status.instanceID"
+// +kubebuilder:printcolumn:name="State",type="string",JSONPath=".status.state"
+// +kubebuilder:printcolumn:name="Public IP",type="string",JSONPath=".status.publicIP"
+// +kubebuilder:printcolumn:name="Private IP",type="string",JSONPath=".status.privateIP"
+// +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
+// +kubebuilder:object:root=true
 type EC2Instance struct {
 	metav1.TypeMeta `json:",inline"`
 
