@@ -1,0 +1,35 @@
+apiVersion: compute.cloud.com/v1alpha1
+kind: EC2Instance
+metadata:
+  name: web-server-1
+  namespace: default
+spec:
+  instanceName: my-operator-instance
+  instanceType: t3.micro
+  amiId: ami-0303e2e4a29f041a3
+  region: eu-central-1
+  availabilityZone: eu-central-1a
+  keyPair: rikops
+  securityGroups:
+    - sg-062bc0d6dc7628612
+  subnet: subnet-0681dee4ff9d569c3
+  userData: |
+    #!/bin/bash
+    apt update -y
+    apt install -y apache2
+    systemctl enable apache2
+    systemctl start apache2
+  tags:
+    Name: k8s-managed-web-server
+    ManagedBy: ec2-operator
+    Environment: production
+  storage:
+    rootVolume:
+      size: 30
+      type: gp3
+      encrypted: true
+    additionalVolumes:
+      - size: 100
+        type: gp3
+        deviceName: /dev/sdf
+        encrypted: true
