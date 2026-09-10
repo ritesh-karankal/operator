@@ -12,7 +12,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 )
 
-func createEc2Instance(ec2Instance *computev1alpha1.EC2Instance) (createdInstanceInfo *computev1alpha1.CreatedInstanceInfo, err error) {
+func createEc2Instance(ctx context.Context, ec2Instance *computev1alpha1.EC2Instance) (createdInstanceInfo *computev1alpha1.CreatedInstanceInfo, err error) {
 	l := log.Log.WithName("createEc2Instance")
 
 	l.Info("=== STARTING EC2 INSTANCE CREATION ===",
@@ -29,7 +29,7 @@ func createEc2Instance(ec2Instance *computev1alpha1.EC2Instance) (createdInstanc
 		SubnetId:     aws.String(ec2Instance.Spec.Subnet),
 		MinCount:     aws.Int32(1),
 		MaxCount:     aws.Int32(1),
-		//SecurityGroupIds: []string{ec2Instance.Spec.SecurityGroups[0]},
+		SecurityGroupIds: []string{ec2Instance.Spec.SecurityGroups[0]},
 	}
 
 	l.Info("=== CALLING AWS RunInstances API ===")
