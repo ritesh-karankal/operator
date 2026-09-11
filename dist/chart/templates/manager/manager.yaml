@@ -39,10 +39,7 @@ spec:
           {{- end }}
           {{- if .Values.controllerManager.container.env }}
           env:
-            {{- range $key, $value := .Values.controllerManager.container.env }}
-            - name: {{ $key }}
-              value: {{ $value }}
-            {{- end }}
+            {{- toYaml .Values.controllerManager.container.env | nindent 12 }}
           {{- end }}
           livenessProbe:
             {{- toYaml .Values.controllerManager.container.livenessProbe | nindent 12 }}
