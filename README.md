@@ -1,4 +1,4 @@
-# operator
+# EC2 Kubernetes Operator
 A Kubernetes operator written in Go using Kubebuilder for managing AWS EC2 instances through Kubernetes custom resources.
 
 ## Description
@@ -269,7 +269,7 @@ kubectl get crd ec2instances.compute.cloud.com
 
 
 ## Contributing
-// TODO(user): Add detailed information on how you would like others to contribute to this project
+Feel free to add improvements or more functionality to the project.
 
 **NOTE:** Run `make help` for more information on all potential `make` targets
 
